@@ -2,7 +2,10 @@ const express = require('express');
 const db = require('./db.js');
 const bcryptjs=require('bcryptjs');
 const jwt=require('jsonwebtoken');
+const auth = require('./middleware.js');
 const router = express.Router();
+
+
 router.post('/create', async (req, res) => {
     try {
         const {name,email,password}=req.body;
@@ -47,4 +50,48 @@ router.post('/create', async (req, res) => {
     }
 })
 
+router.post('/login', async (req, res) => {
+    try {
+        const {email,password}=req.body;
+        if(!email || !password){
+            return res.send({
+                success:false,
+                message:'Please fill the field'
+            })
+        }else{
+            const users=await db('users').select('*').where('email', email).first();
+            if(users){
+                const compare_password=await bcryptjs.compare(password,users.password);
+                if(compare_password){
+                    const user_id={user_id:users.id};
+                    const token=jwt.sign(user_id,"hilalahmadkhanasafullstackdeveloper");
+                    return res.send({
+                        success: true,
+                        token,
+                        message:'Account login successfully'
+                    })
+                }else{
+                    return res.send({
+                        success:false,
+                        message:'Invalid Email and password'
+                    })
+                }
+            }else{
+                return res.send({
+                    success:false,
+                    message:'Invalid Email and password'
+                })
+            }
+        }
+    } catch (errors) {
+        return res.send({
+            success: false,
+            message: errors.message
+        })
+    }
+})
+
+router.get('/me',auth, async (req, res)=>{
+    
+})
 module.exports = router;
