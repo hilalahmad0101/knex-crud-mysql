@@ -92,6 +92,20 @@ router.post('/login', async (req, res) => {
 })
 
 router.get('/me',auth, async (req, res)=>{
-    
+    try {
+
+        console.log(req)
+        const user_id=req.users;
+        const users=await db('users').select('*').where('id',user_id).first();
+        return res.send({
+            success:true,
+            users
+        })
+    } catch (error) {
+        return res.send({
+            success:false,
+            message:error.message
+        })
+    }
 })
 module.exports = router;

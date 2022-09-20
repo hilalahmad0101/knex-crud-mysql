@@ -1,5 +1,6 @@
 const knex = require('knex')
 
+/* Connecting to the database. */
 const db = knex({
     client: "mysql",
     connection: {
@@ -9,5 +10,6 @@ const db = knex({
         database: "knex_crud",
     },
 })
+/* Exporting the database connection to the other files. */
 
 module.exports=db;

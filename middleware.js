@@ -1,6 +1,6 @@
 const jwt=require('jsonwebtoken')
 
-const auth=async(req,res,auth)=>{
+const auth=async(req,res,next)=>{
     const token=req.headers.user_access_token;
     if(token){
         try{
@@ -18,6 +18,7 @@ const auth=async(req,res,auth)=>{
             message:'UnAuthorized'
         })
     }
+    next();
 }
 
 module.exports=auth;
